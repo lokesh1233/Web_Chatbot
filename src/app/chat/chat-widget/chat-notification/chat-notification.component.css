@@ -1,0 +1,37 @@
+.Noti-2{
+    background-color: #b3b3b3;
+    border-radius: 6px;
+    overflow: hidden;
+    padding: 15px;
+    color: #fff;
+    margin-top: 15px;
+}
+.noti-2-rit{
+    background-color: #fff;
+    border-radius: 50%;
+    font-weight: 600;
+    color: #6f6f6f;
+    width: 22px;
+    text-align: center;
+}
+.cdk-overlay-pane{
+    width: 250px;
+    position: absolute !important;
+    right: 3%;
+    top: 100px;
+}
+.Noti-1{
+    background-color: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    padding: 15px;
+    color: #8D898D;
+}
+.noti-1-rit{
+    background-color: #8D898D;
+    border-radius: 50%;
+    font-weight: 600;
+    color: #fff;
+    width: 22px;
+    text-align: center;
+}

@@ -1,0 +1,670 @@
+<!-- <div class="lds-ellipsis" *ngIf="isLoader == true">
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+</div> -->
+<div class="wrapper {{theme}}">
+  <!-- <div class="wrapper red_blue"> -->
+
+  <!-- <div class="chat-box" *ngIf="visible" [@fadeInOut]="visible"> -->
+  <!-- profile starts -->
+    <div class="chat-box" *ngIf="isProfile">
+      <div class="chat-box-employee">
+        <div class="profile">
+          <span class="employee-cancel"><i class="fa fa-long-arrow-left" aria-hidden="true"
+              (click)="closeProfile()"></i></span>
+          <div class="h-profile">
+            <div class="h-profile-l">
+              <div class="pro-img">
+                <div class="chat-profile">{{empProfileData.shortName}}</div>
+                <!-- <img src="assets/images/profil.png"> -->
+              </div>
+            </div>
+            <div class="h-profile-r">
+              <div class="pro-txt">{{empProfileData.defaultFullName}}<br><span>{{empProfileData.title}}</span></div>
+              <div class="pro-infor">
+                <i class="fa fa-phone"></i> {{empProfileData.cellPhone}} | <i class="fa fa-envelope"></i> <a
+                  href="mailto:{{empProfileData.email}}">{{empProfileData.email}}</a>
+              </div>
+            </div>
+          </div>
+  
+          <div class="e-content">
+            <div class="accord">
+              <div class="col">
+                <div class="tabs">
+                  <div class="tab">
+                    <input class="chk" type="checkbox" id="chck1" checked=true>
+                    <label class="tab-label" for="chck1">Role and Department</label>
+                    <div class="tab-content">
+                      <table>
+                        <!-- <tr>
+                          <th>Title</th>
+                          <td>{{empProfileData.title}}</td>
+                        </tr> -->
+                        <tr>
+                          <th>Department</th>
+                          <td>{{empProfileData.department}}</td>
+                        </tr>
+                        <tr>
+                          <th>Location</th>
+                          <td>{{empProfileData.location}}</td>
+                        </tr>
+                        <!-- <tr>
+                          <th>Division</th>
+                          <td>{{empProfileData.division}}</td>
+                        </tr> -->
+                      </table>
+                    </div>
+                  </div>
+                  <div class="seperator"></div>
+                  <div class="tab">
+                    <input class="chk" type="checkbox" id="chck2">
+                    <label class="tab-label" for="chck2">Supervisors</label>
+                    <div class="tab-content">
+                      <table>
+                        <tr>
+                          <th>Manager</th>
+                          <td>{{empProfileData.manager.defaultFullName}}</td>
+                        </tr>
+                        <!-- <tr>
+                          <th>HR</th>
+                          <td>{{empProfileData.hr.defaultFullName}}</td>
+                        </tr> -->
+                      </table>
+                    </div>
+                  </div>
+                  <div class="seperator"></div>
+                  <div class="tab"
+                    *ngIf="empProfileData.colleagueDetailsList != undefined && empProfileData.colleagueDetailsList.length > 0">
+                    <input class="chk" type="checkbox" id="chck3">
+                    <label class="tab-label" for="chck3">Peers</label>
+                    <div class="tab-content">
+                      <!-- <div class="search-list" *ngFor="let colgu of empProfileData.colleagueDetailsList | sortBy:'asc':'defaultFullName';">
+                        <div class="Name">{{colgu.defaultFullName}}<br><span>{{colgu.title}}</span></div>
+                      </div> -->
+                      <!-- <div *ngFor="let colgu of empProfileData.colleagueDetailsList | tablefilter:{defaultFullName:searchText, email:searchText} | sortBy:'asc':'defaultFullName'; let _e=index;"> -->
+                      <div *ngFor="let colgu of empProfileData.colleagueDetailsList; let _e=index;">
+                        <div class="search-list" *ngIf="colgu.defaultFullName">
+                          <div class="letter noimg">{{colgu.defaultFullName[0] | titlecase}}</div>
+                          <div class="Name">{{colgu.defaultFullName}}<br><span>{{colgu.email}} | {{colgu.location}}</span>
+                          </div>
+                          <div class="view eyeviewicon"><i class="fa fa-eye"
+                              (click)="openProfile(colgu, empProfileData.colleagueDetailsList)"></i></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+      </div>
+    </div>
+  <!-- profile ends -->
+
+  <div (click)="chatBoat()" class="chatbutton">
+    <span class="avataricon">
+      <img src="../../../assets/images/Zeebot.svg" alt="avatar">
+    </span>
+  </div>
+
+
+  <!-- employee directory starts class="chat-box" -->
+  <div [ngClass]="[isEmployeeLoading == true ? 'chat-box disabledbutton' : 'chat-box']" *ngIf="isEmployee">
+    <!-- <div class="chat-box" *ngIf="isEmployee"></div> -->
+    <div class="chat-box-employee">
+      <div class="employe">
+        <div class="employe-header">
+          <h3 class="e-header">Employee Search</h3>
+          <span class="employee-cancel"><i class="fa fa-times" aria-hidden="true" (click)="closeEmployee()"></i></span>
+        </div>
+        <div class="e-content">
+          <div *ngIf="isEmployeeLoading" class="loader-outer">
+            <div class="emp-loader">Loading...</div>
+          </div>
+          <!-- *ngIf="isEmployeeLoading" -->
+          <div class="search">
+            <!-- <i class="fa fa-filter filter-i" (click)="EmpLocationFilter()"></i> -->
+            <input type="text" placeholder="Search by name" [(ngModel)]="searchText" (change)="onEMPSearchChange()"><i
+              class="fa fa-search search-i"></i>
+          </div>
+          <div class="muli-select">
+            <ng-multiselect-dropdown name="location" [placeholder]="'Search by location'" [data]="EmpLocations"
+              [disabled]="disabled" [settings]="dropdownSettings" [(ngModel)]="onEmpSelectedItems"
+              (onSelect)="onItemSelect($event)" (onDeSelect)="onItemSelect($event)"
+              (onDropDownClose)="onEmpDropDownClose($event)">
+            </ng-multiselect-dropdown>
+
+          </div>
+          <!-- <div  *ngFor="let emp of employeeData | multiSelectfilter:{location:onEmpSelectedItems} | tablefilter:{defaultFullName:searchText, email:searchText, location:onEmpSelectedItems} | sortBy:'asc':'defaultFullName'; let _e=index;"> -->
+          <!-- <div  *ngFor="let emp of employeeData | tablefilter:{location:locationSearch, defaultFullName:searchText, email:searchText} | sortBy:'asc':'defaultFullName'; let _e=index;"> -->
+          <div *ngFor="let emp of employeeData; let _e=index;">
+            <div class="search-list" *ngIf="emp.defaultFullName && isEmployeeSearch == true">
+              <div class="letter noimg">{{emp.defaultFullName[0] | titlecase}}</div>
+              <div class="Name">{{emp.defaultFullName}}<br><span>{{emp.email}} | {{emp.location}}</span></div>
+              <div class="view eyeviewicon"><i class="fa fa-eye" (click)="openProfile(emp)"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- employee directory ends -->
+
+  <!-- main chat -->
+  <ng-container *ngIf="boatView">
+    <div [ngClass]="boatView ? 'chatboatview':'chatboathide'" class="chat-box" *ngIf="isMain">
+      <div class="chat-box-header">
+        <div class="chat_header_container">
+  
+          <chat-avatar class="zeeavatar" [image]="operator.avatar" [name]="operator.shortName"></chat-avatar>
+  
+          <h3 class="operator-name zeename">
+            {{operator.name}}
+          </h3>
+  
+          <div class="theme_selector_container_box">
+            <!-- <mat-button-toggle-group #group="matButtonToggleGroup" class="theme_switcher_group">
+              <mat-button-toggle *ngFor="let toggle of toggleTheme" class="{{toggle.selectedClass}}"
+                [disabled]="toggle.disabled" (change)="themeSelectionEvent($event.value)" [value]="toggle.colour">
+  
+                {{toggle.colour}}
+  
+              </mat-button-toggle>
+            </mat-button-toggle-group> -->
+  
+            <div class="theme_switcher_parent" [ngClass]= "{'active_swatch_toggler' : showSwatches}">
+              <span (click)="todoListHomeReview()" class="listicon">
+                <img src="../../../assets/images/list.png" alt="">
+              </span>
+              <!-- <a  href=""> -->
+                <span (click)="closebot()" class="closeicon">
+                  <img src="../../../assets/images/cancel.png" alt="">
+                </span>
+                <!-- <i class="fa fa-times" aria-hidden="true"></i> -->
+              <!-- </a> -->
+              
+              
+              <!-- <a (click)="themeSwatcherToggle()" class="theme_button_toggler"><i class="fal fa-palette"></i></a>
+              <span class="button_tooltip">Change Theme</span> -->
+            </div>
+  
+            <!-- <h3 class="operator-name">
+              {{operator.name}} -->
+            <span class="noti"><i class="fa fa-bell-o" aria-hidden="true" (click)="openDialog()"></i></span>
+            <!-- </h3> -->
+          </div>
+  
+  
+        </div>
+  
+        <!-- new theme swatcher -->
+        <div class="theme_swatches" [ngClass]= "{'active_swatch' : showSwatches}">
+          <div class="theme_swatch_wrapper">
+            <button (click)="themeSelectionEvent(toggle)" [disabled]="toggle.disabled" class="theme_swatch_bubble {{toggle.selectedClass}}"   *ngFor="let toggle of toggleTheme">
+              <i class="fas fa-palette"></i>
+              <span class="color_tool_tip">{{ toggle.themeID }}</span>
+            </button>
+            <!-- <a class="theme_swatch_bubble theme_swatch_bubble2">
+              <i class="fas fa-palette"></i>
+              <span class="color_tool_tip">Red-Red</span>
+            </a>
+            <a class="theme_swatch_bubble theme_swatch_bubble3">
+              <i class="fas fa-palette"></i>
+              <span class="color_tool_tip">Red-Red</span>
+            </a> -->
+          </div>
+        </div>
+        <div *ngIf="hideHimessage && !listView" fxFlex="100" class="initialmsg">
+          <p class="hitext">
+            <span class="himsg">Hi !</span>
+            I'm Zeebo, how may I help you today?
+          </p>
+        </div>
+        <!-- new theme swatcher -->
+  
+      </div>
+      <!-- <perfect-scrollbar class="ps"> -->
+      <div *ngIf="!listView" class="chat-box-main background" (scroll)="onScroll($event)">
+  
+        <div class="chat-message-bottom" #bottom></div>
+        <!-- <perfect-scrollbar class="ps"> -->
+        <ng-container *ngFor="let message of messages; let _m=index">
+          <div class="chat-message" [class.chat-message-received]="message.type === 'received'"
+            [class.chat-message-received-width]="message.type === 'received' && message.table.length > 1" [@fadeIn]
+            [class.chat-message-sent]="message.type === 'sent'">
+            <div class="msg-box-wrap">
+              <!-- <div class="pro-img">
+                <div class="chat-profile" >{{message.from.avatar}}</div>
+              </div> -->
+              <chat-avatar [image]="message.from.avatar" [name]="message.from.shortName" class="chat-message-from-avatar zeemessageicon">
+              </chat-avatar>
+  
+              <!-- header tag-->
+              <div class="chat-message-text"
+                *ngIf="(message.text != '' || message.isLink == true) || message.loading == true">
+                <div *ngIf="message.text != '' && message.isLink == false" class="normal-msg">
+                  {{message.text}}
+                </div>
+                <div *ngIf="message.loading == true" class="normal-msg cnt-Loading">
+                  <div class="loader">Loading...</div>
+                </div>
+                <!-- link rendering -->
+                <!-- <div class="link-wrap" *ngIf="message.isLink == true" [innerHTML]='message.text'></div> -->
+                <div class="link-wrap" *ngIf="message.isLink == true">
+                  {{message.urlLinkData.preText}}
+                  <span *ngFor="let lnk of message.urlLinkData.linkArr">
+                    <a [href]="lnk.href" rel="noopener noreferrer" target="_blank" style="cursor: pointer;">
+                      {{lnk.title}}
+                    </a> {{lnk.text}}
+                  </span>
+                  {{message.urlLinkData.postText}}
+                </div>
+  
+  
+              </div>
+              <!-- <div class="msg-sub-content"> -->
+              <div class="msg-sub-content service-wrap">
+                <ngx-daterangepicker-material *ngIf=" message.isDatepicker == true" (choosedDate)="choosedDate($event)"
+                  locale="it" format="DD-MM-YYYY" [isCustomDate]="isCustomDate" [isTooltipDate]="isTooltipDate">
+                </ngx-daterangepicker-material>
+                <!-- table rendering -->
+
+
+                <!-- <div *ngIf="message.Learning == false && message.table.length > 0" id="carouselExampleIndicators" class="carousel slide sliderinnerview horizontal-scroll-block" data-ride="carousel"> -->
+                
+                  <!-- <carousel height="150">
+                    <div class="table-holder carousel-cell" *ngFor="let tabs of message.table;let _t = index">
+                      <table>
+                        <tbody>
+
+                          <tr class="outerlist" *ngFor="let tab of tabs.carousel">
+                            <td [ngClass]="[message.tableDesign == true  && tab.isCase == 'first' ? 'orange' : '']"
+                              colspan="2" *ngIf="tab.isCase == 'first' && message.tableDesign == true">
+                              <b>{{ tab.key }}</b>
+                              - {{ tab.value }}
+                            </td>
+
+                            <td *ngIf="tab.isCase == 'dict' && message.tableDesign == true">
+                              <b>{{ tab.value.key_1 }}</b>
+                              <br>{{ tab.value.val_1 }}
+                            </td>
+                            <td *ngIf="tab.isCase == 'dict' && message.tableDesign == true">
+                              <b>{{ tab.value.key_2 }}</b>
+                              <br>{{ tab.value.val_2 }}
+                            </td>
+
+                            <td colspan="2" *ngIf="tab.isCase == 'last' && message.tableDesign == true">
+                              <b>{{ tab.key }}</b>
+                              <br>{{ tab.value }}
+                            </td>
+                            <td class="holiday-left date" *ngIf="tab.isCase == 'last' && message.tableDesign == false">
+                              {{ tab.key }}</td>
+                            <td class="holiday-right reason" *ngIf="tab.isCase == 'last' && message.tableDesign == false">
+                              {{ tab.value }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <div class="btn-wrap" *ngIf="tabs.buttons.length>0">
+                        <button (click)="sendMessage_custom(btn, _t, _m)"
+                          [ngClass]="[btn.isClass == true ? 'bpw-button-b' : 'bpw-button-o']"
+                          *ngFor="let btn of tabs.buttons">{{btn.title}}</button>
+                      </div>
+                    </div>
+                   
+                </carousel> -->
+
+
+                
+
+
+                  <!-- <div class="carousel-inner sliderinnersec">
+                    <div class="carousel-item active">
+                      <h1 class="d-block w-100">first Slide</h1>
+                    </div>
+                    <div class="carousel-item">
+                      <h1 class="d-block w-100">second Slide</h1>
+                    </div>
+                    <div class="carousel-item">
+                      <h1 class="d-block w-100">third Slide</h1>
+                    </div>
+                  </div>
+                  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                  </a> -->
+
+
+                <!-- </div> -->
+
+
+
+                <div
+                  [ngClass]="[message.tableDesign == true ? 'holiday-list horizontal-scroll-wrap' : 'horizontal-scroll-wrap']"
+                  *ngIf="message.Learning == false && message.table.length > 0">
+                  <!-- <perfect-scrollbar class="ps"> -->
+                  <div class="horizontal-scroll-block">
+                    <div class="table-holder" *ngFor="let tabs of message.table;let _t = index">
+                      <table>
+                        <tbody>
+                          <tr class="outerlist" *ngFor="let tab of tabs.carousel">
+                            <!-- first head condition -->
+                            <td [ngClass]="[message.tableDesign == true  && tab.isCase == 'first' ? 'orange' : '']"
+                              colspan="2" *ngIf="tab.isCase == 'first' && message.tableDesign == true">
+                              <b>{{ tab.key }}</b>
+                              - {{ tab.value }}
+                            </td>
+                            <!-- multiple tds condition -->
+                            <td *ngIf="tab.isCase == 'dict' && message.tableDesign == true">
+                              <b>{{ tab.value.key_1 }}</b>
+                              <br>{{ tab.value.val_1 }}
+                            </td>
+                            <td *ngIf="tab.isCase == 'dict' && message.tableDesign == true">
+                              <b>{{ tab.value.key_2 }}</b>
+                              <br>{{ tab.value.val_2 }}
+                            </td>
+                            <!-- remaining case condition -->
+                            <td colspan="2" *ngIf="tab.isCase == 'last' && message.tableDesign == true">
+                              <b>{{ tab.key }}</b>
+                              <br>{{ tab.value }}
+                            </td>
+                            <td class="holiday-left date" *ngIf="tab.isCase == 'last' && message.tableDesign == false">
+                              {{ tab.key }}</td>
+                            <td class="holiday-right reason" *ngIf="tab.isCase == 'last' && message.tableDesign == false">
+                              {{ tab.value }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <div class="btn-wrap" *ngIf="tabs.buttons.length>0">
+                        <button (click)="sendMessage_custom(btn, _t, _m)"
+                          [ngClass]="[btn.isClass == true ? 'bpw-button-b' : 'bpw-button-o']"
+                          *ngFor="let btn of tabs.buttons">{{btn.title}}</button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- </perfect-scrollbar> -->
+                </div>
+  
+                <!-- covid 19 rendering -->
+                <div class="covid" *ngIf="message.corona.length>0">
+                  <div class="covid-h">COVID-19 India</div>
+                  <div class="covid-l-m">
+                    <div [ngClass]="[covid.MainClass]" *ngFor="let covid of message.corona;">
+                      <div [ngClass]="[covid.ConfirmedClass]">{{covid.Case}}</div>
+                      <div [ngClass]="[covid.NewClass]">{{covid.NewValue}}</div>
+                      <div [ngClass]="[covid.ActiveClass]">{{covid.ActiveValue}}</div>
+                    </div>
+                  </div>
+                  
+                </div>
+  
+                <!-- Learning rendering -->
+                <div
+                  [ngClass]="[message.Learning == true ? 'holiday-list horizontal-scroll-wrap' : 'horizontal-scroll-wrap']"
+                  *ngIf="message.Learning == true && message.table.length > 0">
+                  <!-- <perfect-scrollbar class="ps"> -->
+                  <div class="horizontal-scroll-block">
+                    <div class="table-holder learn" *ngFor="let tabs of message.table;let _t = index">
+                      <table>
+                        <tbody>
+                          <tr *ngFor="let tab of tabs.carousel">
+                            <!-- first head condition -->
+                            <!-- <td [ngClass]="[message.Learning == true  && tab.isCase == 'first' ? 'orange' : '']"
+                             colspan="2" *ngIf="tab.isCase == 'first' && message.Learning == true">
+                             <b>{{ tab.key }}</b>
+                             - {{ tab.value }}
+                           </td> -->
+                            <!-- multiple tds condition -->
+                            <!-- <td *ngIf="tab.isCase == 'dict' && message.Learning == true">
+                             <b>{{ tab.value.key_1 }}</b>
+                             <br>{{ tab.value.val_1 }}
+                           </td>
+                           <td *ngIf="tab.isCase == 'dict' && message.Learning == true">
+                             <b>{{ tab.value.key_2 }}</b>
+                             <br>{{ tab.value.val_2 }}
+                           </td> -->
+                            <!-- remaining case condition -->
+                            <td colspan="2" *ngIf="tab.isCase == 'last' && message.Learning == true">
+                              <b>{{ tab.key }}</b>
+                              <br>{{ tab.value }}
+                            </td>
+                            <td class="holiday-left" *ngIf="tab.isCase == 'last' && message.Learning == false">
+                              {{ tab.key }}</td>
+                            <td class="holiday-right" *ngIf="tab.isCase == 'last' && message.Learning == false">
+                              {{ tab.value }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+  
+                    </div>
+                  </div>
+                  <!-- </perfect-scrollbar> -->
+                </div>
+  
+  
+                <!-- travel summary rendering -->
+                <div
+                  [ngClass]="[message.disable == true ? 'horizontal-scroll-wrap disabledbutton' : 'horizontal-scroll-wrap']"
+                  *ngIf="message.travelSummary.length > 0">
+                  <div class="horizontal-scroll-block">
+                    <div class="table-holder" *ngFor="let tabs of message.travelSummary;let _t = index">
+                      <!-- fa fa-plane -->
+                      <div class="travel-heading"><i [ngClass]="tabs.Transport" aria-hidden="true"
+                          (click)="transportType(tabs)" style="cursor:pointer;"></i> Travel Summary</div>
+                      <div class="t-content">
+                        <div class="t-content-left">
+                          From <br><span>{{ tabs.Origion | uppercase}} </span> <br>{{tabs.fromDate}}
+                        </div>
+                        <div class="t-content-middle">
+                          <i class="fa fa-arrow-right" data-toggle="tooltip" title="One way"
+                            *ngIf="tabs.TripType != 'Yes'"></i>
+                          <i class="fa fa-exchange" (click)="tripRouteChange(tabs)" data-toggle="tooltip"
+                            title="Round trip" *ngIf="tabs.TripType == 'Yes'"></i><br>
+                          <span (click)="tripType(tabs)"
+                            [ngClass]="[tabs.TripType == 'Yes' ? 'bpw-tripType-b' : 'bpw-tripType-o']">{{ tabs.TripType }}</span>
+                        </div>
+                        <div class="t-content-right">
+                          To <br><span>{{tabs.Destination | uppercase}}</span> <br>{{tabs.toDate}}
+                        </div>
+                      </div>
+                      <div class="t-content-bottom">
+                        <div class="t-content-bottom-l">
+                          <i class="fa fa-phone"></i>
+                          <input type="number" max="99999" ui-grid-editor [(ngModel)]="tabs.Mobile" type="text"
+                            name="telephone" class="mobileEdit">
+                          <!-- <span>{{tabs.Mobile}}</span> -->
+                        </div>
+                        <div class="t-content-bottom-r">
+                          <span>
+                            <div id="app-cover">
+                              <div class="button b2" id="button-16" data-toggle="tooltip" title="Accommodation">
+                                <input type="checkbox" class="checkbox">
+                                <div class="knobs"></div>
+                                <div class="layer"><i class="fa fa-bed"></i></div>
+                              </div>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="btn-wrap" *ngIf="tabs.buttons.length>0">
+                        <button (click)="sendMessage_custom(btn, _t, _m)"
+                          [ngClass]="[btn.isClass == true ? 'bpw-button-b' : 'bpw-button-o']"
+                          *ngFor="let btn of tabs.buttons">{{btn.title}}</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+  
+                <!-- News-Content Starts-->
+                <div class="msg-sub-content service-wrap news" *ngIf="message.news.length>0">
+                  <div class="holiday-list horizontal-scroll-wrap">
+                    <div class="horizontal-scroll-block">
+                      <div class="news-item-inner" *ngFor="let news of message.news;">
+                        <div class="news-item-inner-img">
+                          <img class="d-block" [src]="news.image" alt="image not found">
+                        </div>
+                        <div class="news-item-inner-content">
+                          <p class="news-date"><i class="f-11">{{news.date}}</i></p>
+                          <p><strong class="f-11">{{news.heading}}</strong></p>
+                          <p class="news-link"><a [href]="news.readmore" target="_blank">Read More <i
+                                class="fa fa-long-arrow-right" aria-hidden="true"></i></a> </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- News-Content Ends-->
+  
+                <!-- image rendering -->
+                <div class="img-holder" *ngIf="message.image != ''">
+                  <img [src]="message.image" width="50%">
+                </div>
+  
+                <!-- checkbox rendering -->
+                <div class="checkbox-css" *ngIf="message.checkbox.length>0">
+  
+                  <div class="checkboxcls" *ngFor="let check of message.checkbox">
+                    <input type="checkbox" [checked]='check._checked' [(ngModel)]="check._checked"
+                      (click)="selectionGenerate(check, _m)">
+                    <label class="container">{{check.title}} </label>
+                  </div>
+  
+                  <button class="bpw-button-solid" (click)="sendMessage_custom(btn, undefined, _m)"
+                    *ngFor="let btn of message.checkboxButton">{{btn.title}}</button>
+                  <!-- <button class="">Generate Report</button> -->
+  
+                </div>
+  
+                <!-- arrow mark rendering -->
+                <!-- <div class="arrowmark rendering" *ngIf="message.arrowmark.length>0">
+                <p class="checkboxcls" *ngFor="let arrow of message.arrowmark"><i class="fa fa-stop-circle p-i"></i> {{arrow.title}}</p>
+              </div> -->
+  
+                <!-- arrow mark rendering changes to link -->
+                <!-- <div class="arrowmark rendering" *ngIf="message.arrowmark.length>0">
+                  <p class="checkboxcls angular-with-newlines" *ngFor="let arrow of message.arrowmark">
+                    {{arrow.title.preText}}
+                    <span *ngFor="let Clnk of arrow.title.linkArr">
+                      <a [href]="Clnk.href" rel="noopener noreferrer" target="_blank" style="cursor: pointer;">
+                        {{Clnk.title}}
+                      </a> {{Clnk.text}}
+                    </span>
+                    {{arrow.title.postText}}
+                  </p>
+                </div> -->
+  
+              </div>
+
+
+<!-- arrow mark rendering changes to link -->
+<div class="arrowmark rendering" *ngIf="message.arrowmark.length>0">
+  <p class="checkboxcls angular-with-newlines" *ngFor="let arrow of message.arrowmark">
+    {{arrow.title.preText}}
+    <span *ngFor="let Clnk of arrow.title.linkArr">
+      <a class="linkline" [href]="Clnk.href" rel="noopener noreferrer" target="_blank" style="cursor: pointer;">
+        {{Clnk.title}}
+      </a> {{Clnk.text}}
+    </span>
+    {{arrow.title.postText}}
+  </p>
+</div>
+
+              <!-- buttons rendering -->
+              <div class="service-wrap" *ngIf="message.btns.length>0">
+                <button class="bpw-button tagview" (click)="sendMessage_custom(btn)"
+                  *ngFor="let btn of message.btns">{{btn.title}}</button>
+              </div>
+  
+              <!-- like and dislike buttons -->
+              <p class="like_dis" *ngIf="message.isDisLike==true">
+                <i class="fa fa-thumbs-o-up" aria-hidden="true" (click)="likeButton(true)"></i>
+                <i class="fa fa-thumbs-o-down" aria-hidden="true" (click)="likeButton(false)"></i>
+              </p>
+  
+            </div>
+  
+  
+  
+            <div class="chat-message-date">
+              {{message.date | date: 'MMM d, y, h:mm a'}}
+            </div>
+
+            <div class="relatedsec" *ngIf="message.questions.length>0">
+              <h3 class="questiontitle">Related Questions</h3>
+              <p *ngFor="let qtn of message.questions" class="questions" >
+                <!-- <span class="searchicon">
+                  <img src="../../../assets/images/search.png" alt="search">
+                </span> -->
+                <button class="bpw-button-solid" (click)="sendMessage_custom(qtn)">{{qtn.title}}</button>
+               </p>
+            </div>
+          </div>
+        </ng-container>
+        <!-- weather screen -->
+        <div id="wtr-ls" class="wtr-scn" *ngIf="isWeatherLoaded == true">
+          <div class="wt-loc">
+            {{weather.location}}
+          </div>
+          <div class="wt-temp">
+            <i class="fa fa-sun-o" aria-hidden="true"></i>
+            <span>{{weather.degree}} &#176; C </span>
+          </div>
+          <div class="wt-des">
+            {{weather.description}}
+          </div>
+        </div>
+        <div class="dummy-div">
+          <!-- dummydiv -->
+        </div>
+        <!-- </perfect-scrollbar> -->
+      </div>
+      <!-- </perfect-scrollbar> -->
+      <div *ngIf="!listView" class="chat-box-footer">
+        <!-- <chat-input (send)="sendMessage($event)" (dismiss)="toggleChat()" [focus]="focus"></chat-input> -->
+        <chat-input (send)="sendMessage($event)" (home)="returnHome($event)" (voice)="sendVoice($event)"
+          (dismiss)="toggleChat()" [focus]="focus"></chat-input>
+      </div>
+<!-- notifications -->
+<div fxLayout="row wrap" fxFlex="100" class="notifications" *ngIf="listView">
+  <div fxLayout="row wrap" fxFlex="100" class="notifyouter">
+    <div class="closeouter">
+      <span class="closebtn" (click)="closeTodo()">
+        <i title="Main menu" class="fa fa-home"></i>
+      </span>
+    </div>
+    <div class="notify" *ngFor="let todo of todoListArr let _t=index">
+        <h3 class="title">{{todo.CategoryLabel}}</h3>
+        <p class="listdate"><span><i class="fa fa-clock"></i></span> {{todo.CreatedOn}}</p>
+        <p *ngIf="todo.ToDoSubject" class="describe">Description: {{todo.ToDoSubject}}</p>
+        <!-- <p class="describe"><b>Item Description:</b> Duis volutpat erat et pharetra elementum. Fusce ut enim ac purus ullamcorper sollicitudin non quis mauris.</p> -->
+        <span class="todolink" *ngIf="todo.linkUrl != undefined"><a target="_blank" href="{{todo.linkUrl}}">Open</a></span>
+        <button  *ngIf="todo.buttons != undefined && todo.buttons.length > 0" (click)="todoListApprove(todo.buttons[0], _t)" [ngClass]="[todo.buttons[0].title == 'Approve' ? 'approve' : 'reject']"  mat-button  >{{todo.buttons[0].title}}</button>
+        <button *ngIf="todo.buttons != undefined && todo.buttons.length > 1" (click)="todoListApprove(todo.buttons[1], _t)" [ngClass]="[todo.buttons[1].title == 'Approve' ? 'approve' : 'reject']" mat-button>{{todo.buttons[1].title}}</button>
+    </div>
+
+    <!-- <div class="notify">
+        <h3 class="title">Lorem Ipsum</h3>
+        <p class="describe"><b>Description:</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis volutpat erat et pharetra elementum.</p>
+        <p class="describe"><b>Item Description:</b> Duis volutpat erat et pharetra elementum. Fusce ut enim ac purus ullamcorper sollicitudin non quis mauris.</p>
+        <span class="link"><a href="">Open</a></span>
+    </div> -->
+  </div>
+</div>
+<!-- notifications -->
+
+    </div>
+  </ng-container>
+  <!-- main chat end-->
+  <!-- <button class="chat-button" (click)="toggleChat()">
+    <span [@fadeIn] *ngIf="visible">✕</span>
+    <span [@fadeIn] *ngIf="!visible">?</span>
+  </button> -->
+</div>
